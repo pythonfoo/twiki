@@ -10,7 +10,7 @@ def get_changes():
             revision = site.revisions([change["revid"]])[0]
             link_to_diff = "https://wiki.chaosdorf.de/?type=revision&diff=prev&oldid={}".format(change["old_revid"])
             message = "{} - {} by {} - {}".format(revision["pagetitle"], link_to_diff, revision["user"], revision["comment"])
-            last_revid = change["old_revid"]
+            last_revid = change["revid"]
         except IndexError as exc:
             message = "{}: {}".format(type(exc).__name__, exc)
         yield message, last_revid
