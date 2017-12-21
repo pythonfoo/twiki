@@ -5,6 +5,7 @@ from mwclient import Site
 site = Site("wiki.chaosdorf.de", path="/")
 
 def get_changes():
+    """ Iterates over the recent changes made to the wiki. """
     last_revid = -1
     for change in site.recentchanges():
         try:
