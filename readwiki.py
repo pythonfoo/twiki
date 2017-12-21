@@ -5,6 +5,7 @@ from mwclient import Site
 site = Site("wiki.chaosdorf.de", path="/")
 
 def get_changes():
+    last_revid = -1
     for change in site.recentchanges():
         try:
             revision = site.revisions([change["revid"]])[0]
