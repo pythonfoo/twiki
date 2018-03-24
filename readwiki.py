@@ -35,6 +35,9 @@ def get_changes():
             if revision["comment"] != "":
                 _message += " - {}".format(revision["comment"])
 
+            if (len(_message) > 279):
+                _message = _message[:275] + '...'
+
             _last_revid = change["revid"]
         except IndexError as exc:
             _message = "{}: {}".format(type(exc).__name__, exc)
