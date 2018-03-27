@@ -1,5 +1,3 @@
-import config_local
-
 wiki_site = "en.wikipedia.org"
 wiki_api_path = '/w/'
 wiki_view_path = '/wiki/'
