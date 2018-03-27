@@ -2,6 +2,7 @@ wiki_site = "en.wikipedia.org"
 wiki_api_path = '/w/'
 wiki_view_path = '/wiki/'
 
+silent = False  # suppresses all "prints" TODO: use logging library!
 max_entries = 100
 twitter_dry_run = True
 twitter_api_key = ''

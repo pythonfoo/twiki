@@ -28,13 +28,17 @@ def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
     changes.reverse()
 
     if changes_overflow:
-        missing_message = "Limit of changes reached. Please see https://{}{}Special:RecentChanges for more information.".format(config.wiki_site, config.wiki_view_path)
-        missing_link = WikiChange(changes[-1].revId, missing_message)
+        missing_message = \
+            "Limit of changes reached. Please see https://{}{}Special:RecentChanges for more information."\
+            .format(config.wiki_site, config.wiki_view_path)
+        missing_link = WikiChange()
+        missing_link.revId = changes[-1].revId
+        missing_link.set_message(missing_message)
         
         changes.insert(0, missing_link)
 
     for change in changes:
-        tweet(twitter, change.message)
+        tweet(twitter, change.get_message())
 
     if not changes:
         return last_revid
@@ -43,10 +47,12 @@ def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
 
 
 def tweet(twitter, message):
-    print("Tweeting:", message)
+    if not config.silent:
+        print("Tweeting:", message)
+
     if not config.twitter_dry_run:
         twitter.update_status(status=message)
-    else:
+    elif not config.silent:
         print('DRY RUN!')
 
 

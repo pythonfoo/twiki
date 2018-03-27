@@ -6,16 +6,54 @@ import config
 site = Site(config.wiki_site, path=config.wiki_api_path)
 
 
-class WikiChange():
-    def __init__(self, _rev_id, _message):
-        self.revId = _rev_id
+class WikiChange:
+    def __init__(self):
+        self.hasData = False
+        self.revision = None
+        self.change = None
+        self.revId = -1
+        self.message = ''
+
+    def set_data(self, _revision, _change):
+        self.hasData = True
+        self.revision = _revision
+        self.change = _change
+        self.revId = self.change["revid"]
+
+    def set_message(self, _message):
         self.message = _message
+
+    def get_message(self):
+        if self.message != '':
+            return self.message
+
+        if not self.hasData:
+            raise Exception('NO MESSAGE AND NO DATA TO PROCESS!')
+
+        link_to_diff = "https://{}{}?type=revision&diff=next&oldid={}".format(
+            config.wiki_site,
+            config.wiki_view_path,
+            self.change["old_revid"]
+        )
+        _message = "{} - {} by {}".format(self.revision["pagetitle"], link_to_diff, self.revision["user"])
+        if self.revision["comment"] != "":
+            _message += " - {}".format(self.revision["comment"])
+
+        if len(_message) > 279:
+            _message = _message[:275] + '...'
+
+        self.revId = self.change["revid"]
+
+        self.message = _message
+        return self.message
 
 
 def get_changes():
     """ Iterates over the recent changes made to the wiki. """
-    _last_revid = -1
+
     for change in site.recentchanges():
+        change_obj = WikiChange()
+
         try:
             revisions = site.revisions([change["revid"]])
             if not revisions:
@@ -26,24 +64,14 @@ def get_changes():
             if revision["user"] in config.user_name_black_list:
                 continue
 
-            link_to_diff = "https://{}{}?type=revision&diff=next&oldid={}".format(
-                config.wiki_site,
-                config.wiki_view_path,
-                change["old_revid"]
-            )
-            _message = "{} - {} by {}".format(revision["pagetitle"], link_to_diff, revision["user"])
-            if revision["comment"] != "":
-                _message += " - {}".format(revision["comment"])
+            change_obj.set_data(revision, change)
 
-            if (len(_message) > 279):
-                _message = _message[:275] + '...'
-
-            _last_revid = change["revid"]
         except IndexError as exc:
-            _message = "{}: {}".format(type(exc).__name__, exc)
+            change_obj.set_message("{}: {}".format(type(exc).__name__, exc))
 
-        yield WikiChange(_last_revid, _message)
+        yield change_obj
+
 
 if __name__ == '__main__':
     for wikiChange in get_changes():
-        print(wikiChange.message)
+        print(wikiChange.get_message())
