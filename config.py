@@ -13,5 +13,5 @@ user_name_black_list = set()
 
 try:
     from config_local import *
-except Exception as ex:
+except ImportError as ex:
     pass
