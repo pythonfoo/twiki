@@ -1,3 +1,5 @@
+import os
+
 wiki_site = "en.wikipedia.org"
 wiki_api_path = '/w/'
 wiki_view_path = '/wiki/'
@@ -16,3 +18,11 @@ try:
     from config_local import *
 except ImportError as ex:
     pass
+
+# loop over all local vars and overwrite with found environ vars
+for name in list(vars().keys()):
+    if name.isupper() and name in os.environ:
+        try:
+            locals()[name] = int(os.environ[name])
+        except ValueError:
+            locals()[name] = os.environ[name]
