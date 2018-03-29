@@ -23,6 +23,19 @@ class WikiChange:
     def set_message(self, _message):
         self.message = _message
 
+    def is_spam(self):
+        """
+        various checks to see if the change is/might be spam
+        """
+
+        if not self.hasData:
+            return False
+
+        if self.change["old_revid"] == 0:
+            return True
+
+        return False
+
     def get_message(self):
         if self.message != '':
             return self.message
@@ -65,6 +78,9 @@ def get_changes():
                 continue
 
             change_obj.set_data(revision, change)
+
+            if change_obj.is_spam():
+                continue
 
         except IndexError as exc:
             change_obj.set_message("{}: {}".format(type(exc).__name__, exc))
