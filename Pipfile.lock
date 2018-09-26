@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a8866962f64857aaee9f6e8545b1a9e5cba5a06f0e0bc11b8446e868d8dda1b3"
+            "sha256": "a6295b9207b6ee0fca51e349f7c5cd5a93afdae1ed3c125f3c7079f33dbb3e4e"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -37,11 +37,11 @@
         },
         "mwclient": {
             "hashes": [
-                "sha256:08f917b995b331b937ed8c7e297406e3c8d33b80234679ee7fbfeeafd7570a8e",
-                "sha256:f01efd6d6765a12017cd5bc2edd55b79a5e7fbb7343e74c6a23de8a3475e2741"
+                "sha256:10d318b36f1f38c3d480ab95450514054a9b7b2d00315cac4f97d096284b17e3",
+                "sha256:ed7a0eeb98f0309946ae8762b60eae10eb507e4b67400931ec24abd0aee3d7b4"
             ],
             "index": "pypi",
-            "version": "==0.8.6"
+            "version": "==0.9.1"
         },
         "oauthlib": {
             "hashes": [
@@ -73,10 +73,10 @@
         },
         "twython": {
             "hashes": [
-                "sha256:da333ef12eba90e758e67fc8374a74c611d00643f679c11e03ac4e86d0611acb"
+                "sha256:24ae29b4dd8d69df81707eb5fb7a1babd6689a3d69cd618f0647997d6179d338"
             ],
             "index": "pypi",
-            "version": "==3.4.0"
+            "version": "==3.7.0"
         },
         "urllib3": {
             "hashes": [
