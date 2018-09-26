@@ -1,0 +1,12 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mwclient = "==0.8.6"
+twython = "==3.4.0"
+
+[dev-packages]
+
+[requires]
