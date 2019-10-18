@@ -31,7 +31,7 @@ class WikiChange:
         if not self.hasData:
             return False
 
-        if self.change["old_revid"] == 0:
+        if self.change["type"] == "log":
             return True
 
         return False
