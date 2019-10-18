@@ -63,8 +63,9 @@ class WikiChange:
 
 def get_changes():
     """ Iterates over the recent changes made to the wiki. """
-
-    for change in site.recentchanges():
+    # maybe support more complex queries?
+    show = "!minor" if config.ignore_minor_changes else ""
+    for change in site.recentchanges(show=show):
         change_obj = WikiChange()
 
         try:
