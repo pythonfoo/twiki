@@ -6,6 +6,7 @@ wiki_view_path = '/wiki/'
 
 silent = False  # suppresses all "prints" TODO: use logging library!
 max_entries = 100
+ignore_minor_changes = False
 twitter_dry_run = True
 twitter_api_key = ''
 twitter_api_secret = ''
