@@ -31,11 +31,17 @@ You may want to set the first option to `False` after confirming that everything
 
 You can configure twiki even more - simply override the values in `config.py`.
 
-Then, please install the needed dependencies:
-(You might want to set up a virtual environment for this.)
+Then, please setup the pipenv: (You need to have pipenv installed for this.)
+
+    pipenv install
+
+You can test twiki and your configuration by running `pipenv run ./tweet.py`.
+
+If you don't want to install pipenv just for this application
+(you should, your're missing some nice features), you can still use pip:
 
     pip3 install -r requirements.txt
 
-You can test twiki and your configuration by running `python3 tweet.py`.
+And then run it with `python3 tweet.py`.
 
 If everything works, set `twitter_dry_run` to `False` and add a cron job (or something similiar).
