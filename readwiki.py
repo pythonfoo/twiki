@@ -62,12 +62,12 @@ class WikiChange:
 
 
 def get_filter():
-    parts = [
-        "!minor" if config.ignore_minor_changes else "",
-        "!bot" if config.ignore_bots else ""
-    ]
-
-    return '|'.join(part for part in parts if part)
+    show_params = list()
+    if config.ignore_minor_changes:
+        show_params.append("!minor")
+    if config.ignore_bots:
+        show_params.append("!bot")
+    return '|'.join(show_params)
 
 
 def get_changes():
