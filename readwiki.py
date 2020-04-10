@@ -61,10 +61,20 @@ class WikiChange:
         return self.message
 
 
+def get_filter():
+    parts = [
+        "!minor" if config.ignore_minor_changes else "",
+        "!bot" if config.ignore_bots else ""
+    ]
+
+    return '|'.join(part for part in parts if part)
+
+
 def get_changes():
     """ Iterates over the recent changes made to the wiki. """
     # maybe support more complex queries?
-    show = "!minor" if config.ignore_minor_changes else ""
+    show = get_filter()
+
     for change in site.recentchanges(show=show):
         change_obj = WikiChange()
 

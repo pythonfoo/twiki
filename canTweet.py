@@ -1,5 +1,6 @@
 import json
 
+
 class canTweet(object):
 
     def __init__(self):
@@ -14,7 +15,6 @@ class canTweet(object):
 
     def can_tweet(self, revid):
         return revid > self.last_revid
-
 
     def set_last_revid(self, revid):
         self.last_revid = revid
