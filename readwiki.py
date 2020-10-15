@@ -43,12 +43,22 @@ class WikiChange:
         if not self.hasData:
             raise Exception('NO MESSAGE AND NO DATA TO PROCESS!')
 
-        link_to_diff = "https://{}{}?type=revision&diff=next&oldid={}".format(
-            config.wiki_site,
-            config.wiki_view_path,
-            self.change["old_revid"]
+        if self.change["type"] == "new":
+            # new pages have no diff, just link to the revision
+            link = "https://{}{}?oldid={}".format(
+                config.wiki_site,
+                config.wiki_view_path,
+                self.change["revid"],
+            )
+        else:
+            link = "https://{}{}?type=revision&diff=next&oldid={}".format(
+                config.wiki_site,
+                config.wiki_view_path,
+                self.change["old_revid"],
+            )
+        _message = "{} - {} by {}".format(
+            self.revision["pagetitle"], link, self.revision["user"]
         )
-        _message = "{} - {} by {}".format(self.revision["pagetitle"], link_to_diff, self.revision["user"])
         if self.revision["comment"] != "":
             _message += " - {}".format(self.revision["comment"])
 
