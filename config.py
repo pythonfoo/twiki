@@ -24,8 +24,8 @@ except ImportError as ex:
 
 # loop over all local vars and overwrite with found environ vars
 for name in list(vars().keys()):
-    if name.isupper() and name in os.environ:
+    if name.upper() in os.environ:
         try:
-            locals()[name] = int(os.environ[name])
+            locals()[name] = int(os.environ[name.upper()])
         except ValueError:
-            locals()[name] = os.environ[name]
+            locals()[name] = os.environ[name.upper()]
