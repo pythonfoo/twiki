@@ -23,18 +23,13 @@ class WikiChange:
     def set_message(self, _message):
         self.message = _message
 
-    def is_spam(self):
+    def should_be_ignored(self):
         """
-        various checks to see if the change is/might be spam
+        various checks to see if the change might be spam or other unwanted stuff
         """
-
         if not self.hasData:
             return False
-
-        if self.change["type"] == "log":
-            return True
-
-        return False
+        return True
 
     def get_message(self):
         if self.message != '':
@@ -62,12 +57,13 @@ class WikiChange:
 
 
 def get_filter():
-    parts = [
-        "!minor" if config.ignore_minor_changes else "",
-        "!bot" if config.ignore_bots else ""
-    ]
-
-    return '|'.join(part for part in parts if part)
+    show_params = list()
+    show_params.append("!log")
+    if config.ignore_minor_changes:
+        show_params.append("!minor")
+    if config.ignore_bots:
+        show_params.append("!bot")
+    return '|'.join(show_params)
 
 
 def get_changes():
@@ -90,7 +86,7 @@ def get_changes():
 
             change_obj.set_data(revision, change)
 
-            if change_obj.is_spam():
+            if change_obj.should_be_ignored():
                 continue
 
         except IndexError as exc:
