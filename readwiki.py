@@ -2,6 +2,8 @@
 
 from mwclient import Site
 import config
+import logging
+log = logging.getLogger(__name__)
 
 site = Site(config.wiki_site, path=config.wiki_api_path)
 

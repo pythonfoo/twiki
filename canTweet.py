@@ -1,4 +1,6 @@
 import json
+import logging
+log = logging.getLogger(__name__)
 
 
 class canTweet(object):
@@ -12,6 +14,7 @@ class canTweet(object):
         except Exception as ex:
             # TODO: empty file or no file at all, get the propper error
             pass
+        log.debug("initialized with %s as the last revid", self.last_revid)
 
     def can_tweet(self, revid):
         return revid > self.last_revid
@@ -20,6 +23,7 @@ class canTweet(object):
         self.last_revid = revid
 
     def save(self):
+        log.debug("saving")
         with open(self.memoryFile, 'w') as fHandle:
             json.dump(self.last_revid, fHandle)
 
