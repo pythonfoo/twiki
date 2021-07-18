@@ -66,7 +66,7 @@ def tweet(twitter, message):
     if not config.twitter_dry_run:
         twitter.update_status(status=message)
     else:
-        log.warn('DRY RUN!')
+        log.warning('DRY RUN!')
 
 
 if __name__ == '__main__':
