@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  twiki:
+    build:
+      context: .
+      dockerfile: container/Dockerfile
+    command: /bin/bash container/container_runner.sh
+    #environment:
+    #  - "INTERVAL=10"
+    env_file:
+      - container/.env
+    volumes:
+      - .:/app
+      # do not make the .env available within the container
+      - ./container/dummy/.gitkeep:/app/container/.env

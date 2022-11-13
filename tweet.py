@@ -5,15 +5,8 @@ import config
 import canTweet
 from readwiki import WikiChange
 import logging
+
 log = logging.getLogger(__name__)
-
-
-def setup_logging(log_level: str) -> None:
-    """Configure logging."""
-    numeric_log_level = getattr(logging, log_level.upper(), None)
-    if not numeric_log_level:
-        raise Exception("Invalid log level: {}".format(log_level))
-    logging.basicConfig(level=numeric_log_level)
 
 
 def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
@@ -21,6 +14,7 @@ def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
     Tweets less than 'max_changes' changes newer than 'last_revid'.
     Returns the new 'last_revid'.
     """
+    log.debug("last rev id: %s", last_revid)
     twitter = Twython(api_key, api_secret, token, token_secret)
     log.debug("set up a connection to the twitter api")
     changes = list()
@@ -44,7 +38,7 @@ def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
         log.debug("detected a overflow in changes")
         missing_message = \
             "Limit of changes reached. Please see https://{}{}Special:RecentChanges for more information."\
-            .format(config.wiki_site, config.wiki_view_path)
+            .format(config.WIKI_SITE, config.WIKI_VIEW_PATH)
         missing_link = WikiChange()
         missing_link.revId = changes[-1].revId
         missing_link.set_message(missing_message)
@@ -55,32 +49,36 @@ def run(api_key, api_secret, token, token_secret, last_revid, max_changes):
         tweet(twitter, change.get_message())
 
     if not changes:
+        log.debug("no changes, rev id: %s", last_revid)
         return last_revid
 
+    log.debug("new rev id: %s", changes[-1].revId)
     return changes[-1].revId
 
 
 def tweet(twitter, message):
     logging.debug("Tweeting: %s", message)
 
-    if not config.twitter_dry_run:
+    if not config.TWITTER_DRY_RUN:
         twitter.update_status(status=message)
     else:
         log.warning('DRY RUN!')
 
 
 if __name__ == '__main__':
-    setup_logging(config.log_level)
     cTweet = canTweet.canTweet()
 
     highestRefId = run(
-        config.twitter_api_key,
-        config.twitter_api_secret,
-        config.twitter_token,
-        config.twitter_token_secret,
+        config.TWITTER_API_KEY,
+        config.TWITTER_API_SECRET,
+        config.TWITTER_TOKEN,
+        config.TWITTER_TOKEN_SECRET,
         cTweet.last_revid,
-        config.max_entries)
+        config.MAX_ENTRIES)
     log.info("finished, got %s as the latest revid", highestRefId)
 
-    cTweet.set_last_revid(highestRefId)
-    cTweet.save()
+    if config.TWITTER_DRY_RUN:
+        log.info("TWITTER_DRY_RUN, don't save revid")
+    else:
+        cTweet.set_last_revid(highestRefId)
+        cTweet.save()

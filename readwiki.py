@@ -5,7 +5,7 @@ import config
 import logging
 log = logging.getLogger(__name__)
 
-site = Site(config.wiki_site, path=config.wiki_api_path)
+site = Site(config.WIKI_SITE, path=config.WIKI_API_PATH)
 
 
 class WikiChange:
@@ -25,12 +25,20 @@ class WikiChange:
     def set_message(self, _message):
         self.message = _message
 
-    def should_be_ignored(self):
+    def can_be_send(self):
         """
         various checks to see if the change might be spam or other unwanted stuff
         """
-        if not self.hasData:
+
+        # show_params.append("!log") does not work? re-patch
+        if self.change["type"] == "log":
+            log.debug('exclude log')
             return False
+
+        if not self.hasData:
+            log.debug('HAS NO DATA')
+            return False
+
         return True
 
     def get_message(self):
@@ -43,14 +51,14 @@ class WikiChange:
         if self.change["type"] == "new":
             # new pages have no diff, just link to the revision
             link = "https://{}{}?oldid={}".format(
-                config.wiki_site,
-                config.wiki_view_path,
+                config.WIKI_SITE,
+                config.WIKI_VIEW_PATH,
                 self.change["revid"],
             )
         else:
             link = "https://{}{}?type=revision&diff=next&oldid={}".format(
-                config.wiki_site,
-                config.wiki_view_path,
+                config.WIKI_SITE,
+                config.WIKI_VIEW_PATH,
                 self.change["old_revid"],
             )
         _message = "{} - {} by {}".format(
@@ -70,10 +78,12 @@ class WikiChange:
 
 def get_filter():
     show_params = list()
-    show_params.append("!log")
-    if config.ignore_minor_changes:
+    # WARNING:mwclient.client:Unrecognized value for parameter "rcshow": !log
+    #show_params.append("!log")
+
+    if config.IGNORE_MINOR_CHANGES:
         show_params.append("!minor")
-    if config.ignore_bots:
+    if config.IGNORE_BOTS:
         show_params.append("!bot")
     return '|'.join(show_params)
 
@@ -82,29 +92,46 @@ def get_changes():
     """ Iterates over the recent changes made to the wiki. """
     # maybe support more complex queries?
     show = get_filter()
-
+    counter_ignored = 0
+    counter_blacklist = 0
+    counter_revision = 0
+    total_changes = 0
     for change in site.recentchanges(show=show):
+        total_changes += 1
+        log.debug("got a change  %s", change)
         change_obj = WikiChange()
 
         try:
             revisions = site.revisions([change["revid"]])
             if not revisions:
+                counter_revision += 1
                 continue
 
             revision = revisions[0]
 
-            if revision["user"] in config.user_name_black_list:
+            if revision["user"] in config.USER_NAME_BLACK_LIST:
+                counter_blacklist += 1
                 continue
 
             change_obj.set_data(revision, change)
 
-            if change_obj.should_be_ignored():
+            if not change_obj.can_be_send():
+                log.debug('was ignored %s', change_obj.revId)
+                counter_ignored += 1
                 continue
 
         except IndexError as exc:
+            log.error('recentchanges index ERROR: %s', "{}: {}".format(type(exc).__name__, exc))
             change_obj.set_message("{}: {}".format(type(exc).__name__, exc))
 
         yield change_obj
+
+    log.debug(
+        'changes | ignored: %s | blacklisted: %s | no revision: %s | of total %s / %s',
+        counter_ignored, counter_blacklist, counter_revision,
+        (counter_ignored + counter_blacklist + counter_revision),
+        total_changes
+    )
 
 
 if __name__ == '__main__':

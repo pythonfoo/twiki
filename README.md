@@ -20,11 +20,21 @@ To get started, please clone this repo somewhere first.
 Then create a new file called `config_local.py` containing at least these options:
 
 ```python
-twitter_dry_run = True
-twitter_api_key = '<key>'
-twitter_api_secret = '<secret>'
-twitter_token = '<token>'
-twitter_token_secret = '<token secret>'
+TWITTER_DRY_RUN = True
+TWITTER_API_KEY = '<key>'
+TWITTER_API_SECRET = '<secret>'
+TWITTER_TOKEN = '<token>'
+TWITTER_TOKEN_SECRET = '<token secret>'
+```
+
+For docker, you can set these also in the `container/.env` file in uppercase (INTERVAL is docker exclusive in seconds):
+```dotenv
+INTERVAL=300
+TWITTER_DRY_RUN=1
+TWITTER_API_KEY=<KEY>
+TWITTER_API_SECRET=<SECRET>
+TWITTER_TOKEN=<TOKEN>
+TWITTER_TOKEN_SECRET=<TOKEN_SECRET>
 ```
 
 You may want to set the first option to `False` after confirming that everything works as expected.
@@ -45,3 +55,15 @@ If you don't want to install pipenv just for this application
 And then run it with `python3 tweet.py`.
 
 If everything works, set `twitter_dry_run` to `False` and add a cron job (or something similiar).
+
+## docker
+
+```shell
+docker-compose up
+```
+
+Set the environment variable `INTERVAL` in seconds for the call-delay. Default is 300 seconds (5 minutes).  
+You can use `container/.env` file.  Do not commit this with any data, it just has to exist for compose to function.  
+```dotenv
+INTERVAL=300
+```
