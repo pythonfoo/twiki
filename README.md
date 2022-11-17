@@ -45,16 +45,16 @@ Then, please setup the pipenv: (You need to have pipenv installed for this.)
 
     pipenv install
 
-You can test twiki and your configuration by running `pipenv run ./tweet.py`.
+You can test twiki and your configuration by running `pipenv run ./messager.py`.
 
 If you don't want to install pipenv just for this application
 (you should, your're missing some nice features), you can still use pip:
 
     pip3 install -r requirements.txt
 
-And then run it with `python3 tweet.py`.
+And then run it with `python3 messager.py`.
 
-If everything works, set `twitter_dry_run` to `False` and add a cron job (or something similiar).
+If everything works, set `TWITTER_DRY_RUN` to `False` and add a cron job (or something similiar).
 
 ## docker
 

@@ -110,3 +110,4 @@ venv.bak/
 last_revid.json
 config_local.py
 notes.md
+test_*.py
