@@ -22,11 +22,17 @@ MAX_ENTRIES = 25
 IGNORE_MINOR_CHANGES = False
 IGNORE_BOTS = False
 
-TWITTER_DRY_RUN = True
+TWITTER_DRY_RUN = False
 TWITTER_API_KEY = ''
 TWITTER_API_SECRET = ''
 TWITTER_TOKEN = ''
 TWITTER_TOKEN_SECRET = ''
+
+MATRIX_DRY_RUN = False
+MATRIX_USER_NAME = ''  # @chaosdorf_wiki:matrix.org
+MATRIX_PASSWORD = ''
+MATRIX_SERVER = ''  # https://matrix-client.matrix.org
+MATRIX_ROOM_ID = ''  # !aqsASgGGPgMEVHeMdW:cybre.space
 
 USER_NAME_BLACK_LIST = set()
 

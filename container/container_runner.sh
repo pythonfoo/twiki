@@ -9,7 +9,7 @@ fi
 
 while :
 do
-    python tweet.py
+    python messager.py
     sleep  "$INTERVAL"
 done
 

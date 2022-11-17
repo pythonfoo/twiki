@@ -1,2 +1,6 @@
 mwclient
 twython
+#matrix_bot_api
+#simplematrixbotlib
+#importlib-metadata<5.0
+matrix-nio
