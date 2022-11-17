@@ -8,6 +8,7 @@ class CanMessage(object):
     def __init__(self):
         self.last_revid = 0
         self.memory_file = 'last_revid.json'
+
         try:
             with open(self.memory_file) as file_handle:
                 self.last_revid = json.load(file_handle)
@@ -24,8 +25,8 @@ class CanMessage(object):
 
     def save(self):
         log.debug("saving")
-        with open(self.memory_file, 'w') as fHandle:
-            json.dump(self.last_revid, fHandle)
+        with open(self.memory_file, 'w') as file_handle:
+            json.dump(self.last_revid, file_handle)
 
 
 if __name__ == '__main__':
