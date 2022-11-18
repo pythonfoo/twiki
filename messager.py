@@ -1,13 +1,72 @@
 #!/usr/bin/env python3
 import logging
 from twython import Twython
+from MatrixClient import MatrixClient
+from mastodon import Mastodon
 import config
+import helper
 from readwiki import WikiChange
 import readwiki
 import CanMessage
-import MatrixClient
 
 log = logging.getLogger(__name__)
+
+
+def get_bot_twitter() -> Twython or None:
+    if not helper.can_twitter():
+        return None
+
+    log.debug("set up a connection to twitter")
+
+    twitter_bot = None
+    try:
+        twitter_bot = Twython(
+            config.TWITTER_API_KEY,
+            config.TWITTER_API_SECRET,
+            config.TWITTER_TOKEN,
+            config.TWITTER_TOKEN_SECRET
+        )
+    except Exception as ex:
+        log.error("ERROR LOGIN TWITTER: " + str(ex))
+        twitter_bot = None
+
+    return twitter_bot
+
+
+def get_bot_matrix() -> MatrixClient() or None:
+    if not helper.can_matrix():
+        return None
+
+    log.debug("set up a connection to matrix")
+
+    matrix_bot = None
+    try:
+        matrix_bot = MatrixClient()
+        matrix_bot.login()
+    except Exception as ex:
+        log.error("ERROR LOGIN MATRIX: " + str(ex))
+        matrix_bot = None
+
+    return matrix_bot
+
+
+def get_bot_mastodon() -> Mastodon() or None:
+    if not helper.can_mastodon():
+        return None
+
+    log.debug("set up a connection to mastodon")
+
+    mastodon_bot = None
+    try:
+        mastodon_bot = Mastodon(
+            access_token=config.MASTODON_ACCESS_TOKEN,
+            api_base_url=config.MASTODON_API_BASE_URL
+        )
+    except Exception as ex:
+        log.error("ERROR LOGIN MASTODON: " + str(ex))
+        mastodon_bot = None
+
+    return mastodon_bot
 
 
 def run(last_revid):
@@ -17,19 +76,9 @@ def run(last_revid):
     """
     log.debug("last rev id: %s", last_revid)
 
-    log.debug("set up a connection to the twitter api")
-    twitter = Twython(
-        config.TWITTER_API_KEY,
-        config.TWITTER_API_SECRET,
-        config.TWITTER_TOKEN,
-        config.TWITTER_TOKEN_SECRET
-    )
-
-    matrix_bot = None
-    if MatrixClient.data_valid():
-        log.debug("set up a connection to matrix")
-        matrix_bot = MatrixClient.MatrixClient()
-        matrix_bot.login()
+    twitter_bot = get_bot_twitter()
+    matrix_bot = get_bot_matrix()
+    mastodon_bot = get_bot_mastodon()
 
     changes = list()
     changes_overflow = False
@@ -62,8 +111,8 @@ def run(last_revid):
 
     for change in changes:
         message = change.get_message()
-        tweet(twitter, message)
-        toot(None, message)
+        tweet(twitter_bot, message)
+        toot(mastodon_bot, message)
         matrix(matrix_bot, message)
 
     if not changes:
@@ -75,24 +124,46 @@ def run(last_revid):
 
 
 def tweet(twitter, message):
-    logging.debug("Tweeting: %s", message)
+    if twitter is None:
+        return
+
+    logging.debug("Send tweet: %s", message)
 
     if not config.TWITTER_DRY_RUN:
-        twitter.update_status(status=message)
+        try:
+            twitter.update_status(status=message)
+        except Exception as ex:
+            log.error('TWITTER SEND ERROR: ' + str(ex))
     else:
         log.warning('TWITTER DRY RUN!')
 
 
 def toot(_mastodon, message):
-    log.warning('MASTODON NOT IMPLEMENTED')
+    if _mastodon is None:
+        return
+
+    logging.debug("Send toot: %s", message)
+
+    if not config.MASTODON_DRY_RUN:
+        try:
+            _mastodon.toot(message)
+        except Exception as ex:
+            log.error('MASTODON SEND ERROR: ' + str(ex))
+    else:
+        log.warning('MASTODON DRY RUN!')
 
 
 def matrix(_matrix, message):
     if _matrix is None:
         return
 
+    logging.debug("Send matrix: %s", message)
+
     if not config.MATRIX_DRY_RUN:
-        _matrix.send_message(message)
+        try:
+            _matrix.send_message(message)
+        except Exception as ex:
+            log.error('MATRIX SEND ERROR: ' + str(ex))
     else:
         log.warning('MATRIX DRY RUN!')
 
@@ -103,7 +174,7 @@ if __name__ == '__main__':
     highest_ref_id = run(can_message.last_revid)
     log.info("finished, got %s as the latest revid", highest_ref_id)
 
-    if config.TWITTER_DRY_RUN or config.MATRIX_DRY_RUN:
+    if helper.any_dry_run():
         log.info("DRY_RUN, don't save revid")
     else:
         can_message.set_last_revid(highest_ref_id)

@@ -28,18 +28,3 @@ class MatrixClient:
 
     def __del__(self):
         asyncio.get_event_loop().run_until_complete(self.client.close())
-
-
-def data_valid():
-    required_config_data = [
-        config.MATRIX_SERVER,
-        config.MATRIX_USER_NAME,
-        config.MATRIX_PASSWORD,
-        config.MATRIX_ROOM_ID
-    ]
-
-    for config_data in required_config_data:
-        if config_data == '':
-            return False
-
-    return True
