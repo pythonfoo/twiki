@@ -1,8 +1,13 @@
 # twiki
 
-This tool is meant to be run regularily and tweets recent changes made to a MediaWiki.
+Cross-posts recent changes made to a MediaWiki.  
+This tool started as "twitter only" news updater but is now a cross-poster.
 
-It can be seen in action at [@chaosdorf_wiki](https://twitter.com/chaosdorf_wiki).
+It can be seen in action at:  
+* Twitter https://twitter.com/chaosdorf_wiki
+* Mastodon https://botsin.space/web/@chaosdorf_wiki
+* Matrix https://app.element.io/#/room/#chaosdorf-activities:cybre.space
+* Discord
 
 ## requirements
 
@@ -10,7 +15,7 @@ twiki needs a few things to work:
 
  * Python 3
  * a MediaWiki to monitor (it needs no account or key, though)
- * a Twitter account to post from (with credentials)
+ * at least one supported social media account to post from (with credentials)
  * a few Python libraries
 
 ## installation
