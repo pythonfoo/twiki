@@ -45,3 +45,13 @@ def can_matrix():
     ]
 
     return data_valid(required_config_data)
+
+
+def can_discord():
+    required_config_data = [
+        config.DISCORD_APP_ID,
+        config.DISCORD_TOKEN,
+        config.DISCORD_CHANNEL_ID,
+    ]
+
+    return data_valid(required_config_data)
