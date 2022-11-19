@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import logging
 from twython import Twython
-from MatrixClient import MatrixClient
+from clients.MatrixClient import MatrixClient
+from clients.DiscordClient import DiscordClient
 from mastodon import Mastodon
 import config
 import helper
@@ -69,9 +70,18 @@ def get_bot_mastodon() -> Mastodon() or None:
     return mastodon_bot
 
 
+def get_bot_discord() -> DiscordClient() or None:
+    if not helper.can_discord():
+        return None
+
+    log.debug("initialise discord client")
+
+    return DiscordClient()
+
+
 def run(last_revid):
     """
-    Tweets less than 'max_changes' changes newer than 'last_revid'.
+    Sends messages less than 'max_changes' changes newer than 'last_revid'.
     Returns the new 'last_revid'.
     """
     log.debug("last rev id: %s", last_revid)
@@ -79,6 +89,7 @@ def run(last_revid):
     twitter_bot = get_bot_twitter()
     matrix_bot = get_bot_matrix()
     mastodon_bot = get_bot_mastodon()
+    discord_bot = get_bot_discord()
 
     changes = list()
     changes_overflow = False
@@ -111,9 +122,10 @@ def run(last_revid):
 
     for change in changes:
         message = change.get_message()
-        tweet(twitter_bot, message)
-        toot(mastodon_bot, message)
-        matrix(matrix_bot, message)
+        send_tweet(twitter_bot, message)
+        send_toot(mastodon_bot, message)
+        send_matrix(matrix_bot, message)
+        send_discord(discord_bot, message)
 
     if not changes:
         log.debug("no changes, rev id: %s", last_revid)
@@ -123,7 +135,7 @@ def run(last_revid):
     return changes[-1].revId
 
 
-def tweet(twitter, message):
+def send_tweet(twitter, message):
     if twitter is None:
         return
 
@@ -138,7 +150,7 @@ def tweet(twitter, message):
         log.warning('TWITTER DRY RUN!')
 
 
-def toot(_mastodon, message):
+def send_toot(_mastodon, message):
     if _mastodon is None:
         return
 
@@ -153,7 +165,7 @@ def toot(_mastodon, message):
         log.warning('MASTODON DRY RUN!')
 
 
-def matrix(_matrix, message):
+def send_matrix(_matrix, message):
     if _matrix is None:
         return
 
@@ -166,6 +178,21 @@ def matrix(_matrix, message):
             log.error('MATRIX SEND ERROR: ' + str(ex))
     else:
         log.warning('MATRIX DRY RUN!')
+
+
+def send_discord(_discord, message):
+    if _discord is None:
+        return
+
+    logging.debug("Send discord: %s", message)
+
+    if not config.DISCORD_DRY_RUN:
+        try:
+            _discord.send_message(message)
+        except Exception as ex:
+            log.error('DISCORD SEND ERROR: ' + str(ex))
+    else:
+        log.warning('DISCORD DRY RUN!')
 
 
 if __name__ == '__main__':

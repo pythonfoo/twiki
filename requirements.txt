@@ -2,3 +2,4 @@ mwclient
 twython
 matrix-nio
 Mastodon.py
+requests
