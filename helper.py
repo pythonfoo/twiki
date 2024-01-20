@@ -5,7 +5,21 @@ log = logging.getLogger(__name__)
 
 
 def any_dry_run():
-    return config.TWITTER_DRY_RUN or config.MATRIX_DRY_RUN or config.MASTODON_DRY_RUN
+    dry_run_count = 0
+
+    if config.TWITTER_ACTIVE and config.TWITTER_DRY_RUN:
+        dry_run_count += 1
+
+    if config.MATRIX_ACTIVE and config.MATRIX_DRY_RUN:
+        dry_run_count += 1
+
+    if config.MASTODON_ACTIVE and config.MASTODON_DRY_RUN:
+        dry_run_count += 1
+
+    if config.DISCORD_ACTIVE and config.DISCORD_DRY_RUN:
+        dry_run_count += 1
+
+    return dry_run_count > 0
 
 
 def data_valid(data_list):

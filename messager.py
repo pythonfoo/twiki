@@ -202,7 +202,7 @@ if __name__ == '__main__':
     log.info("finished, got %s as the latest revid", highest_ref_id)
 
     if helper.any_dry_run():
-        log.info("DRY_RUN, don't save revid")
+        log.warning("DRY_RUN, don't save %s revid", highest_ref_id)
     else:
         can_message.set_last_revid(highest_ref_id)
         can_message.save()
