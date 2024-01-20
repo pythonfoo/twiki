@@ -14,22 +14,26 @@ MAX_ENTRIES = 25
 IGNORE_MINOR_CHANGES = False
 IGNORE_BOTS = False
 
+TWITTER_ACTIVE = False
 TWITTER_DRY_RUN = False
 TWITTER_API_KEY = ''
 TWITTER_API_SECRET = ''
 TWITTER_TOKEN = ''
 TWITTER_TOKEN_SECRET = ''
 
+MATRIX_ACTIVE = True
 MATRIX_DRY_RUN = False
 MATRIX_USER_NAME = ''  # @chaosdorf_wiki:matrix.org
 MATRIX_PASSWORD = ''
 MATRIX_SERVER = ''  # https://matrix-client.matrix.org
 MATRIX_ROOM_ID = ''  # !aqsASgGGPgMEVHeMdW:cybre.space
 
+MASTODON_ACTIVE = True
 MASTODON_DRY_RUN = False
 MASTODON_ACCESS_TOKEN = ''
 MASTODON_API_BASE_URL = ''  # https://botsin.space
 
+DISCORD_ACTIVE = True
 DISCORD_DRY_RUN = False
 DISCORD_APP_ID = ''
 DISCORD_TOKEN = ''

@@ -86,10 +86,10 @@ def run(last_revid):
     """
     log.debug("last rev id: %s", last_revid)
 
-    twitter_bot = get_bot_twitter()
-    matrix_bot = get_bot_matrix()
-    mastodon_bot = get_bot_mastodon()
-    discord_bot = get_bot_discord()
+    twitter_bot = get_bot_twitter() if config.TWITTER_ACTIVE else None
+    matrix_bot = get_bot_matrix() if config.MATRIX_ACTIVE else None
+    mastodon_bot = get_bot_mastodon() if config.MASTODON_ACTIVE else None
+    discord_bot = get_bot_discord() if config.DISCORD_ACTIVE else None
 
     changes = list()
     changes_overflow = False
