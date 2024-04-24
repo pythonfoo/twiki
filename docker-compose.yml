@@ -9,8 +9,8 @@ services:
     #environment:
     #  - "INTERVAL=10"
     env_file:
-      - container/.env
+      - container/env
     volumes:
       - .:/app
       # do not make the .env available within the container
-      - ./container/dummy/.gitkeep:/app/container/.env
+      - ./container/dummy/.gitkeep:/app/container/env
