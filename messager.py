@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import logging
+
+from requests import ReadTimeout
 from twython import Twython
 from clients.MatrixClient import MatrixClient
 from clients.DiscordClient import DiscordClient
@@ -94,16 +96,20 @@ def run(last_revid):
     changes = list()
     changes_overflow = False
     new_messages_count = 0
-    for change in readwiki.get_changes():
-        if change.revId <= last_revid:
-            break
 
-        new_messages_count += 1
-        changes.append(change)
+    try:
+        for change in readwiki.get_changes():
+            if change.revId <= last_revid:
+                break
 
-        if new_messages_count >= config.MAX_ENTRIES:
-            changes_overflow = True
-            break
+            new_messages_count += 1
+            changes.append(change)
+
+            if new_messages_count >= config.MAX_ENTRIES:
+                changes_overflow = True
+                break
+    except ReadTimeout as ex:
+        log.debug("Read TimeOut: %s", ex)
 
     log.debug("got the following changes: %s", changes)
 
