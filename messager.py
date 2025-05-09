@@ -8,8 +8,7 @@ from clients.DiscordClient import DiscordClient
 from mastodon import Mastodon
 import config
 import helper
-from readwiki import WikiChange
-import readwiki
+from readwiki import ReadWiki
 import CanMessage
 
 log = logging.getLogger(__name__)
@@ -98,7 +97,8 @@ def run(last_revid):
     new_messages_count = 0
 
     try:
-        for change in readwiki.get_changes():
+        read_wiki = ReadWiki()
+        for change in read_wiki.get_changes():
             if change.revId <= last_revid:
                 break
 
@@ -120,7 +120,7 @@ def run(last_revid):
         missing_message = \
             "Limit of {} changes reached. Please see https://{}{}Special:RecentChanges for more information."\
             .format(config.MAX_ENTRIES, config.WIKI_SITE, config.WIKI_VIEW_PATH)
-        missing_link = WikiChange()
+        missing_link = ReadWiki.WikiChange()
         missing_link.revId = changes[-1].revId
         missing_link.set_message(missing_message)
         
